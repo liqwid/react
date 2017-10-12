@@ -26,7 +26,7 @@ const uglifyPlugin = new webpack.optimize.UglifyJsPlugin({ compress: { warnings:
 const compressionPlugin = new CompressionPlugin();
 
 module.exports = {
-  context: path.join(__dirname, 'src'),
+  context: path.join(__dirname, 'example'),
   entry: './index',
   output: {
     publicPath: '/',
@@ -42,7 +42,7 @@ module.exports = {
     compressionPlugin
   ],
   resolve: {
-    modules: ['node_modules', path.join(__dirname, 'src')]
+    modules: ['node_modules', path.join(__dirname, 'example')]
   },
   module: {
     rules: [

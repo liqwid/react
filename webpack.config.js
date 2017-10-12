@@ -19,7 +19,7 @@ const stylesheetsLoaders = [
 ];
 
 module.exports = {
-  context: path.join(__dirname, 'src'),
+  context: path.join(__dirname, 'example'),
   entry: './index',
   output: {
     filename: '[hash].js',
@@ -27,7 +27,7 @@ module.exports = {
   devtool: 'source-map',
   plugins: [htmlWebpackPlugin, definePlugin],
   resolve: {
-    modules: ['node_modules', path.join(__dirname, 'src')]
+    modules: ['node_modules', path.join(__dirname, 'example')]
   },
   module: {
     rules: [
@@ -41,31 +41,6 @@ module.exports = {
       }, {
         test: /\.css$/,
         use: stylesheetsLoaders
-      }, {
-        test: /\.scss$/,
-        use: [...stylesheetsLoaders, {
-          loader: 'sass-loader',
-          options: {
-            sourceMap: true
-          }
-        }]
-      }, {
-        test: /\.sass$/,
-        use: [...stylesheetsLoaders, {
-          loader: 'sass-loader',
-          options: {
-            indentedSyntax: 'sass',
-            sourceMap: true
-          }
-        }]
-      }, {
-        test: /\.less$/,
-        use: [...stylesheetsLoaders, {
-          loader: 'less-loader',
-          options: {
-            sourceMap: true
-          }
-        }]
       }
     ]
   },
