@@ -1,21 +1,22 @@
 {
-  "name": "onsenui-currency-exchange-widget",
+  "name": "react-redux-exchange-widget",
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "start": "webpack-dev-server --hot",
+    "start": "webpack-dev-server --config ./webpack.dev.config.js --hot",
     "server": "babel-watch server",
-    "production": "babel-node server",
+    "production:example": "babel-node server",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "postinstall": "npm run build",
+    "postinstall": "npm run build:example",
     "eslint": "eslint .",
+    "build:example": "cross-env NODE_ENV=production webpack --config ./webpack.example.production.js --progress --profile --colors",
     "build": "cross-env NODE_ENV=production webpack --config ./webpack.production.js --progress --profile --colors"
   },
   "engines": {
-    "node": "6.6.0",
-    "npm": "3.10.3"
+    "node": "8.4.0",
+    "npm": "5.5.1"
   },
   "jest": {
     "moduleDirectories": [
@@ -26,7 +27,7 @@
     "moduleNameMapper": {
       "^.+\\.(css)$": "identity-obj-proxy"
     },
-    "setupTestFrameworkScriptFile": "<rootDir>/example/test/setup.js"
+    "setupTestFrameworkScriptFile": "<rootDir>/test/setup.js"
   },
   "author": "Tony Popov",
   "license": "MIT",
@@ -79,6 +80,7 @@
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
     "react-redux": "^5.0.6",
-    "redux": "^3.7.2"
+    "redux": "^3.7.2",
+    "redux-promise": "^0.5.3"
   }
 }

@@ -3,6 +3,10 @@ node_modules
 
 # Ignore final files
 dist
+example-dist
 
 # Ignore logs
 npm-debug.log
+
+# Editor config
+.vscode
