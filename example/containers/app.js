@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { loadApp } from 'actions/app';
+import { loadApp } from '../actions/app';
 import styles from './app.css';
+import ExchangeWidget from '../../src/';
 
 type Props = {
   dispatch: () => void,
@@ -21,7 +22,7 @@ export class AppContainer extends Component {
     }
 
     return (
-      <div className={styles.container} />
+      <ExchangeWidget />
     );
   }
 }

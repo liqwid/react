@@ -1,4 +1,4 @@
-import { CHANGE_FROM } from 'constants/action-types';
+import { CHANGE_FROM } from 'action-types';
 import { createReducer } from 'utils';
 
 export const INITIAL_FROM_STATE = null;

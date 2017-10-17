@@ -1,4 +1,4 @@
-import { CHANGE_TO } from 'constants/action-types';
+import { CHANGE_TO } from 'action-types';
 import { toHandlers } from '../to';
 
 const INITIAL_TO = 'USD';

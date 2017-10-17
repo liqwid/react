@@ -1,3 +1,3 @@
-export * from './currencies';
-export * from './to';
-export * from './from';
+export { currenciesById, currencyIds } from './currencies';
+export { to } from './to';
+export { from } from './from';

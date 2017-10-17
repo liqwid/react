@@ -27,7 +27,7 @@ module.exports = {
   devtool: 'source-map',
   plugins: [htmlWebpackPlugin, definePlugin],
   resolve: {
-    modules: ['node_modules', path.join(__dirname, 'example'), path.join(__dirname, 'src')]
+    modules: ['node_modules', path.join(__dirname, 'src')]
   },
   module: {
     rules: [

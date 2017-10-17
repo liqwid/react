@@ -1,6 +1,6 @@
 import { UPDATE_BALANCE, UPDATE_EXCHANGE_AMOUNT,
-         ADD_CURRENCY, REMOVE_CURRENCY,
-         UPDATE_RATES, UPDATE_RATES_LOADING_STATE } from 'action-types';
+         ADD_CURRENCY, REMOVE_CURRENCY, LOAD_RATES,
+         UPDATE_RATES, UPDATE_RATES_LOADING_STATE, SHOW_RATES_ERROR } from 'action-types';
 import { createReducer, omit } from 'utils';
 
 export const INITIAL_CURRENCY_BALANCE         = 0;
@@ -45,7 +45,7 @@ export const currenciesByIdHandlers = {
    * Adds target currency
    * with zero balance, unset exchangeAmount, unset rate and negative rate loading state
    * @param state
-   * @param payload.currencyId
+   * @param {CurrencyId} payload.currencyId
    */
   [ADD_CURRENCY]: (state, { currencyId }) => {
     if (Object.keys(state).includes(currencyId)) return state;
@@ -63,7 +63,7 @@ export const currenciesByIdHandlers = {
   /**
    * Removes target currency
    * @param state
-   * @param payload.currencyId
+   * @param {CurrencyId} payload.currencyId
    */
   [REMOVE_CURRENCY]: (state, { currencyId }) => omit(state, currencyId),
 
@@ -96,9 +96,32 @@ export const currenciesByIdHandlers = {
   }),
 
   /**
-   * Updates rate of specified currencies
+   * Loads rates for specified currencies
+   * Changes loading state to false and removes rate loading error
    * @param state
-   * @param payload.ratesToUsd currencyId to usdRate hashMap:
+   * @param {Object<CurrencyId, ExchangeRate>} payload.ratesToUsd - currencyId to usdRate hashMap:
+   * {
+   *  "EUR": 0.85,
+   *  "USD": 0.75,
+   *  ...
+   * }
+   */
+  [LOAD_RATES]: (state, { ratesToUsd }) =>
+    Object.entries(ratesToUsd).reduce((newState, [currencyId, rateToUsd]) => ({
+      ...newState,
+      [currencyId]: {
+        ...newState[currencyId],
+        rate           : rateToUsd,
+        rateIsLoading  : false,
+        showRatesError : false
+      }
+    }), state),
+
+  /**
+   * Updates rate of specified currencies
+   * Removes rate loading error
+   * @param state
+   * @param {Object<CurrencyId, ExchangeRate>} payload.ratesToUsd currencyId to usdRate hashMap:
    * {
    *  "EUR": 0.85,
    *  "GBP": 0.75,
@@ -110,14 +133,16 @@ export const currenciesByIdHandlers = {
       ...newState,
       [currencyId]: {
         ...newState[currencyId],
-        rate: rateToUsd
+        rate           : rateToUsd,
+        showRatesError : false
       }
     }), state),
 
   /**
    * Updates loading state of speicified currencies
+   * Removes rate loading error
    * @param state
-   * @param payload.loadingStates - currencyId to usdRate hashMap:
+   * @param {Object<CurrencyId, boolean>} payload.loadingStates - currencyId to usdRate hashMap:
    * {
    *  "EUR": true,
    *  "USD": false,
@@ -129,10 +154,25 @@ export const currenciesByIdHandlers = {
       ...newState,
       [currencyId]: {
         ...newState[currencyId],
-        rateIsLoading: loadingState
+        rateIsLoading  : loadingState,
+        showRatesError : false
+      }
+    }), state),
+
+  /**
+   * Adds rates loading error for specified currencies
+   * @param state
+   * @param {CurrencyId[]} payload.currencyIds
+   */
+  [SHOW_RATES_ERROR]: (state, { currencyIds }) =>
+    currencyIds.reduce((newState, currencyId) => ({
+      ...newState,
+      [currencyId]: {
+        ...newState[currencyId],
+        showRatesError: true
       }
     }), state)
 };
 
-export const currencyIds     = createReducer(INITIAL_CURRENCY_IDS, currencyIdsHandlers);
-export const currenciesByIds = createReducer(INITIAL_CURRENCIES_BY_ID, currenciesByIdHandlers);
+export const currencyIds    = createReducer(INITIAL_CURRENCY_IDS, currencyIdsHandlers);
+export const currenciesById = createReducer(INITIAL_CURRENCIES_BY_ID, currenciesByIdHandlers);
