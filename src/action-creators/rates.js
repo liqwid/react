@@ -49,7 +49,7 @@ function showRatesError(dispatch, currencyIds) {
  * Fetches exchange rates for new currencies
  * Manages rates loading states
  * @param {CurrencyId[]} currencyIds
- * @param {() => Promise<Object<CurrencyId, ExchangeRate>>} fetch fetching adapter
+ * @param {(CurrencyId[]) => Promise<Object<CurrencyId, ExchangeRate>>} fetch fetching adapter
  *                                                                can be overloaded
  */
 export function initRates(currencyIds, fetch = fetchRates) {
