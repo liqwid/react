@@ -7,6 +7,7 @@ export const INITIAL_CURRENCY_BALANCE         = 0;
 export const INITIAL_CURRENCY_EXCHANGE_AMOUNT = null;
 export const INITIAL_CURRENCY_RATE            = null;
 export const INITIAL_RATE_LOADING_STATE       = true;
+export const INITIAL_RATE_ERROR_STATE         = false;
 
 const BALANCE_FOR_STARTING_CURRENCIES = 100;
 const INITIAL_CURRENCY_IDS = ['USD', 'EUR', 'GBP'];
@@ -16,7 +17,8 @@ const INITIAL_CURRENCIES_BY_ID = INITIAL_CURRENCY_IDS.reduce((result, currencyId
     balance        : BALANCE_FOR_STARTING_CURRENCIES,
     exchangeAmount : INITIAL_CURRENCY_EXCHANGE_AMOUNT,
     rate           : INITIAL_CURRENCY_RATE,
-    rateIsLoading  : INITIAL_RATE_LOADING_STATE
+    rateIsLoading  : INITIAL_RATE_LOADING_STATE,
+    showRatesError : INITIAL_RATE_ERROR_STATE
   }
 }), {});
 
@@ -55,7 +57,8 @@ export const currenciesByIdHandlers = {
         balance        : INITIAL_CURRENCY_BALANCE,
         exchangeAmount : INITIAL_CURRENCY_EXCHANGE_AMOUNT,
         rate           : INITIAL_CURRENCY_RATE,
-        rateIsLoading  : INITIAL_RATE_LOADING_STATE
+        rateIsLoading  : INITIAL_RATE_LOADING_STATE,
+        showRatesError : INITIAL_RATE_ERROR_STATE
       }
     };
   },
@@ -169,7 +172,8 @@ export const currenciesByIdHandlers = {
       ...newState,
       [currencyId]: {
         ...newState[currencyId],
-        showRatesError: true
+        rateIsLoading  : false,
+        showRatesError : true
       }
     }), state)
 };

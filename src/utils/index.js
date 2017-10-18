@@ -10,7 +10,11 @@ export function unique(array) {
   return [...new Set(array)];
 }
 
-export function omit(object, key) {
-  const { [key]: value, ...withoutKey } = object;
-  return withoutKey;
+export function omit(object, ...keys) {
+  const newKeys = Object.keys(object).filter(key => !keys.includes(key));
+
+  return newKeys.reduce((result, key) => ({
+    ...result,
+    [key]: object[key]
+  }), {});
 }

@@ -34,6 +34,8 @@ describe('ExchangeContainer', () => {
       jsDomWrapper.unmount();
       jsDomWrapper = null;
     }
+    initRates.mockClear();
+    pollForRates.mockClear();
   });
 
   it('should render children', () => {

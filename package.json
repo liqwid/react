@@ -27,7 +27,16 @@
     "moduleNameMapper": {
       "^.+\\.(css)$": "identity-obj-proxy"
     },
-    "setupTestFrameworkScriptFile": "<rootDir>/test/setup.js"
+    "setupTestFrameworkScriptFile": "<rootDir>/test/setup.js",
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "example"
+    ],
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "example",
+      "test"
+    ]
   },
   "author": "Tony Popov",
   "license": "MIT",
@@ -77,6 +86,7 @@
     "react-router": "^4.2.0"
   },
   "dependencies": {
+    "@types/jest": "^21.1.4",
     "axios": "^0.16.2",
     "prop-types": "^15.6.0",
     "react": "^16.0.0",

@@ -1,9 +1,9 @@
 import { UPDATE_BALANCE, UPDATE_EXCHANGE_AMOUNT,
-         UPDATE_RATES, UPDATE_RATES_LOADING_STATE,
-         ADD_CURRENCY, REMOVE_CURRENCY } from 'action-types';
+         UPDATE_RATES, LOAD_RATES, UPDATE_RATES_LOADING_STATE,
+         ADD_CURRENCY, REMOVE_CURRENCY, SHOW_RATES_ERROR } from 'action-types';
 import { omit } from 'utils';
 import { INITIAL_CURRENCY_BALANCE, INITIAL_CURRENCY_EXCHANGE_AMOUNT,
-         INITIAL_CURRENCY_RATE, INITIAL_RATE_LOADING_STATE,
+         INITIAL_CURRENCY_RATE, INITIAL_RATE_LOADING_STATE, INITIAL_RATE_ERROR_STATE,
          currencyIdsHandlers, currenciesByIdHandlers } from '../currencies';
 
 function constructCurrenciesById(currencyIds) {
@@ -13,7 +13,8 @@ function constructCurrenciesById(currencyIds) {
       balance        : INITIAL_CURRENCY_BALANCE,
       exchangeAmount : INITIAL_CURRENCY_EXCHANGE_AMOUNT,
       rate           : INITIAL_CURRENCY_RATE,
-      rateIsLoading  : INITIAL_RATE_LOADING_STATE
+      rateIsLoading  : INITIAL_RATE_LOADING_STATE,
+      showRatesError : INITIAL_RATE_ERROR_STATE
     }
   }), {});
 }
@@ -40,6 +41,11 @@ const NEW_RATES_LOADING_STATE = {
   EUR : true,
   GBP : false
 };
+const NEW_RATES_ERROR_STATE = [
+  'USD',
+  'EUR',
+  'GBP'
+];
 
 function checkSiblingItemsMutation(state, idKey, id, actionType, updateKey, updateValue) {
   const stateWithoutUpdatedItem = omit(state, id);
@@ -228,6 +234,47 @@ describe('currenciesByIdHandlers', () => {
     });
   });
 
+  describe(LOAD_RATES, () => {
+    it('should update rate of every specified currency', () => {
+      const newState = currenciesByIdHandlers[LOAD_RATES](
+        INITIAL_CURRENCIES_BY_ID,
+        { ratesToUsd: NEW_RATES_TO_USD }
+      );
+
+      Object.entries(NEW_RATES_TO_USD).forEach(([currencyId, rate]) =>
+        expect(rate).toBe(newState[currencyId].rate)
+      );
+    });
+
+    it('should copy every currency\'s other properties except error and loading state', () => {
+      const newState = currenciesByIdHandlers[LOAD_RATES](
+        INITIAL_CURRENCIES_BY_ID,
+        { ratesToUsd: NEW_RATES_TO_USD }
+      );
+
+      Object.keys(NEW_RATES_TO_USD).forEach((currencyId) => {
+        const currencyWithoutRate = omit(newState[currencyId], 'rate', 'showRatesError', 'rateIsLoading');
+        const oldCurrencyWithoutRate = omit(INITIAL_CURRENCIES_BY_ID[currencyId], 'rate', 'showRatesError', 'rateIsLoading');
+        expect(currencyWithoutRate).toEqual(expect.objectContaining(oldCurrencyWithoutRate));
+      });
+    });
+
+    it('should unset the rates error for specified currencies', () => {
+      const stateWithErrors = currenciesByIdHandlers[SHOW_RATES_ERROR](
+        INITIAL_CURRENCIES_BY_ID,
+        { currencyIds: INITIAL_CURRENCY_IDS }
+      );
+      const newState = currenciesByIdHandlers[LOAD_RATES](
+        stateWithErrors,
+        { ratesToUsd: NEW_RATES_TO_USD }
+      );
+
+      Object.keys(NEW_RATES_TO_USD).forEach((currencyId) => {
+        expect(newState[currencyId].showRatesError).toEqual(false);
+      });
+    });
+  });
+
   describe(UPDATE_RATES, () => {
     it('should update rate of every specified currency', () => {
       const newState = currenciesByIdHandlers[UPDATE_RATES](
@@ -240,16 +287,46 @@ describe('currenciesByIdHandlers', () => {
       );
     });
 
-    it('should copy every currency\'s other properties', () => {
+    it('should copy every currency\'s other properties except error', () => {
       const newState = currenciesByIdHandlers[UPDATE_RATES](
         INITIAL_CURRENCIES_BY_ID,
         { ratesToUsd: NEW_RATES_TO_USD }
       );
 
       Object.keys(NEW_RATES_TO_USD).forEach((currencyId) => {
-        const currencyWithoutRate = omit(newState[currencyId], 'rate');
-        const oldCurrencyWithoutRate = omit(INITIAL_CURRENCIES_BY_ID[currencyId], 'rate');
+        const currencyWithoutRate = omit(newState[currencyId], 'rate', 'showRatesError');
+        const oldCurrencyWithoutRate = omit(INITIAL_CURRENCIES_BY_ID[currencyId], 'rate', 'showRatesError');
         expect(currencyWithoutRate).toEqual(expect.objectContaining(oldCurrencyWithoutRate));
+      });
+    });
+
+    it('should unset the rates error for specified currencies', () => {
+      const stateWithErrors = currenciesByIdHandlers[SHOW_RATES_ERROR](
+        INITIAL_CURRENCIES_BY_ID,
+        { currencyIds: INITIAL_CURRENCY_IDS }
+      );
+      const newState = currenciesByIdHandlers[LOAD_RATES](
+        stateWithErrors,
+        { ratesToUsd: NEW_RATES_TO_USD }
+      );
+
+      Object.keys(NEW_RATES_TO_USD).forEach((currencyId) => {
+        expect(newState[currencyId].showRatesError).toEqual(false);
+      });
+    });
+
+    it('should unset the loading state for specified currencies', () => {
+      const stateWithLoadings = currenciesByIdHandlers[UPDATE_RATES_LOADING_STATE](
+        INITIAL_CURRENCIES_BY_ID,
+        { loadingStates: NEW_RATES_LOADING_STATE }
+      );
+      const newState = currenciesByIdHandlers[LOAD_RATES](
+        stateWithLoadings,
+        { ratesToUsd: NEW_RATES_TO_USD }
+      );
+
+      INITIAL_CURRENCY_IDS.forEach((currencyId) => {
+        expect(newState[currencyId].rateIsLoading).toEqual(false);
       });
     });
   });
@@ -266,18 +343,76 @@ describe('currenciesByIdHandlers', () => {
       );
     });
 
-    it('should copy every currency\'s other properties', () => {
+    it('should copy every currency\'s other properties except error', () => {
       const newState = currenciesByIdHandlers[UPDATE_RATES_LOADING_STATE](
         INITIAL_CURRENCIES_BY_ID,
         { loadingStates: NEW_RATES_LOADING_STATE }
       );
 
       Object.keys(NEW_RATES_LOADING_STATE).forEach((currencyId) => {
-        const currencyWithoutLoading = omit(newState[currencyId], 'rateIsLoading');
-        const oldCurrencyWithoutLoading = omit(INITIAL_CURRENCIES_BY_ID[currencyId], 'rateIsLoading');
+        const currencyWithoutLoading = omit(newState[currencyId], 'rateIsLoading', 'showRatesError');
+        const oldCurrencyWithoutLoading = omit(INITIAL_CURRENCIES_BY_ID[currencyId], 'rateIsLoading', 'showRatesError');
         expect(currencyWithoutLoading).toEqual(
           expect.objectContaining(oldCurrencyWithoutLoading)
         );
+      });
+    });
+
+    it('should unset the rates error for specified currencies', () => {
+      const stateWithErrors = currenciesByIdHandlers[SHOW_RATES_ERROR](
+        INITIAL_CURRENCIES_BY_ID,
+        { currencyIds: INITIAL_CURRENCY_IDS }
+      );
+      const newState = currenciesByIdHandlers[UPDATE_RATES_LOADING_STATE](
+        stateWithErrors,
+        { loadingStates: NEW_RATES_LOADING_STATE }
+      );
+
+      Object.keys(NEW_RATES_LOADING_STATE).forEach((currencyId) => {
+        expect(newState[currencyId].showRatesError).toEqual(false);
+      });
+    });
+  });
+
+  describe(SHOW_RATES_ERROR, () => {
+    it('should update rates error state of every specified currency', () => {
+      const newState = currenciesByIdHandlers[SHOW_RATES_ERROR](
+        INITIAL_CURRENCIES_BY_ID,
+        { currencyIds: NEW_RATES_ERROR_STATE }
+      );
+
+      NEW_RATES_ERROR_STATE.forEach((currencyId) =>
+        expect(newState[currencyId].showRatesError).toBe(true)
+      );
+    });
+
+    it('should copy every currency\'s other properties except loading state', () => {
+      const newState = currenciesByIdHandlers[SHOW_RATES_ERROR](
+        INITIAL_CURRENCIES_BY_ID,
+        { currencyIds: NEW_RATES_ERROR_STATE }
+      );
+
+      Object.keys(NEW_RATES_LOADING_STATE).forEach((currencyId) => {
+        const currencyWithoutRatesError = omit(newState[currencyId], 'showRatesError', 'rateIsLoading');
+        const oldCurrencyWithoutRatesError = omit(INITIAL_CURRENCIES_BY_ID[currencyId], 'showRatesError', 'rateIsLoading');
+        expect(currencyWithoutRatesError).toEqual(
+          expect.objectContaining(oldCurrencyWithoutRatesError)
+        );
+      });
+    });
+
+    it('should unset the loading state for specified currencies', () => {
+      const stateWithLoadings = currenciesByIdHandlers[UPDATE_RATES_LOADING_STATE](
+        INITIAL_CURRENCIES_BY_ID,
+        { loadingStates: NEW_RATES_LOADING_STATE }
+      );
+      const newState = currenciesByIdHandlers[SHOW_RATES_ERROR](
+        stateWithLoadings,
+        { currencyIds: INITIAL_CURRENCY_IDS }
+      );
+
+      INITIAL_CURRENCY_IDS.forEach((currencyId) => {
+        expect(newState[currencyId].rateIsLoading).toEqual(false);
       });
     });
   });
