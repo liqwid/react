@@ -1,1 +1,1 @@
-export * from './fetchRates';
+export * from './fetch-rates';

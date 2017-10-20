@@ -1,11 +1,13 @@
 import React from 'react';
 import { shallow, mount } from 'enzyme';
+import { LoaderLayout, NoCurrenciesLayout } from 'layouts';
 import { ExchangeContainer } from '../exchange';
 
 const CURRENCY_IDS = ['USD', 'EUR'];
 const NEW_CURRENCY_IDS = ['USD', 'EUR', 'GBP'];
 const ADDED_TO_NEW = ['GBP'];
 
+let initCurrencies;
 let initRates;
 let pollForRates;
 let stopPolling;
@@ -14,14 +16,17 @@ let jsDomWrapper;
 
 describe('ExchangeContainer', () => {
   beforeEach(() => {
+    initCurrencies = jest.fn();
     initRates = jest.fn();
     pollForRates = jest.fn();
     stopPolling = jest.fn();
     component = (
       <ExchangeContainer
+        initCurrencies={initCurrencies}
         initRates={initRates}
         pollForRates={pollForRates}
         stopPolling={stopPolling}
+        appLoaded={false}
         currencyIds={CURRENCY_IDS}
       >
         <div />
@@ -38,30 +43,39 @@ describe('ExchangeContainer', () => {
     pollForRates.mockClear();
   });
 
-  it('should render children', () => {
-    expect(shallow(component).contains(<div />)).toBeTruthy();
+  it('should render loading layout when appLoaded is false', () => {
+    expect(shallow(component).contains(<LoaderLayout />)).toBeTruthy();
   });
 
-  it('should call initRates after mounting with correct ids', () => {
+  it('should render no currencies layout when there is no currencies', () => {
+    const wrapper = shallow(component);
+    wrapper.setProps({ appLoaded: true, currencyIds: [] });
+
+    expect(wrapper.contains(<NoCurrenciesLayout />)).toBeTruthy();
+  });
+
+  it('should render children when appLoaded is true', () => {
+    const wrapper = shallow(component);
+    wrapper.setProps({ appLoaded: true });
+
+    expect(wrapper.contains(<div />)).toBeTruthy();
+  });
+
+  it('should render children when appLoaded is true', () => {
+    const wrapper = shallow(component);
+    wrapper.setProps({ appLoaded: true });
+
+    expect(wrapper.contains(<div />)).toBeTruthy();
+  });
+
+  it('should call initCurrencies after mounting with correct ids', () => {
     jsDomWrapper = mount(component);
 
-    initRates.mockClear();
+    initCurrencies.mockClear();
     jsDomWrapper.unmount();
     jsDomWrapper.mount();
 
-    expect(initRates).toHaveBeenCalledTimes(1);
-    expect(initRates).toHaveBeenCalledWith(CURRENCY_IDS);
-  });
-
-  it('should call pollForRates after mounting with correct ids', () => {
-    jsDomWrapper = mount(component);
-
-    pollForRates.mockClear();
-    jsDomWrapper.unmount();
-    jsDomWrapper.mount();
-
-    expect(pollForRates).toHaveBeenCalledTimes(1);
-    expect(initRates).toHaveBeenCalledWith(CURRENCY_IDS);
+    expect(initCurrencies).toHaveBeenCalledTimes(1);
   });
 
   it('should call stopPolling before unmounting', () => {

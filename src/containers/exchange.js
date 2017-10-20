@@ -1,23 +1,27 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { initRates, pollForRates, stopPollingForRates } from 'action-creators';
+import { initRates, pollForRates, stopPollingForRates, loadInitialCurrencies } from 'action-creators';
+import { LoaderLayout, NoCurrenciesLayout } from 'layouts';
 
-const mapStateToProps = ({ currencyIds }) => ({ currencyIds });
+const mapStateToProps = ({ currencyIds, appLoaded }) => ({ currencyIds, appLoaded });
 
 const mapDispatchToProps = (dispatch) => ({
-  initRates    : (currencyIds) => dispatch(initRates(currencyIds)),
-  pollForRates : (currencyIds) => dispatch(pollForRates(currencyIds)),
-  stopPolling  : () => stopPollingForRates()
+  initCurrencies : () => dispatch(loadInitialCurrencies()),
+  initRates      : (currencyIds) => dispatch(initRates(currencyIds)),
+  pollForRates   : (currencyIds) => dispatch(pollForRates(currencyIds)),
+  stopPolling    : () => stopPollingForRates()
 });
 
 export class ExchangeContainer extends Component {
   static propTypes = {
-    initRates    : PropTypes.func.isRequired,
-    pollForRates : PropTypes.func.isRequired,
-    stopPolling  : PropTypes.func.isRequired,
-    children     : PropTypes.node,
-    currencyIds  : PropTypes.arrayOf(PropTypes.string).isRequired
+    initCurrencies : PropTypes.func.isRequired,
+    initRates      : PropTypes.func.isRequired,
+    pollForRates   : PropTypes.func.isRequired,
+    stopPolling    : PropTypes.func.isRequired,
+    children       : PropTypes.node,
+    currencyIds    : PropTypes.arrayOf(PropTypes.string).isRequired,
+    appLoaded      : PropTypes.bool.isRequired
   }
 
   static defaultProps = {
@@ -25,17 +29,17 @@ export class ExchangeContainer extends Component {
   }
 
   componentDidMount() {
-    const { currencyIds } = this.props;
-    this.props.initRates(currencyIds);
-    this.props.pollForRates(currencyIds);
+    this.props.initCurrencies();
   }
 
   componentWillReceiveProps({ currencyIds }) {
+    const { props } = this;
+
     // Upgrading polling if currencies changed
-    const oldCurrencyIds = this.props.currencyIds;
+    const oldCurrencyIds = props.currencyIds;
     if (currencyIds === oldCurrencyIds) return;
 
-    this.props.pollForRates(currencyIds);
+    props.pollForRates(currencyIds);
 
     // Fetching new rates if they were introduced
     const addedCurrencyIds = currencyIds.filter(
@@ -43,7 +47,7 @@ export class ExchangeContainer extends Component {
     );
     if (!addedCurrencyIds.length) return;
 
-    this.props.initRates(addedCurrencyIds);
+    props.initRates(addedCurrencyIds);
   }
 
   componentWillUnmount() {
@@ -51,7 +55,17 @@ export class ExchangeContainer extends Component {
   }
 
   render() {
-    return <div>{this.props.children}</div>;
+    const { appLoaded, currencyIds, children } = this.props;
+
+    if (!appLoaded) {
+      return <LoaderLayout />;
+    }
+
+    if (!currencyIds.length) {
+      return <NoCurrenciesLayout />;
+    }
+
+    return <div>{children}</div>;
   }
 }
 

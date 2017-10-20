@@ -1,16 +1,16 @@
-import { UPDATE_BALANCE, UPDATE_EXCHANGE_AMOUNT,
-         UPDATE_RATES, LOAD_RATES, UPDATE_RATES_LOADING_STATE,
+import { LOAD_INITIAL_CURRENCIES, ADD_BALANCE, SUBSTRACT_BALANCE,
+         UPDATE_EXCHANGE_AMOUNT, UPDATE_RATES, LOAD_RATES, UPDATE_RATES_LOADING_STATE,
          ADD_CURRENCY, REMOVE_CURRENCY, SHOW_RATES_ERROR } from 'action-types';
 import { omit } from 'utils';
-import { INITIAL_CURRENCY_BALANCE, INITIAL_CURRENCY_EXCHANGE_AMOUNT,
-         INITIAL_CURRENCY_RATE, INITIAL_RATE_LOADING_STATE, INITIAL_RATE_ERROR_STATE,
+import { INITIAL_CURRENCY_BALANCE, INITIAL_CURRENCY_EXCHANGE_AMOUNT, INITIAL_CURRENCY_RATE,
+         BALANCE_FOR_STARTING_CURRENCIES, INITIAL_RATE_LOADING_STATE, INITIAL_RATE_ERROR_STATE,
          currencyIdsHandlers, currenciesByIdHandlers } from '../currencies';
 
-function constructCurrenciesById(currencyIds) {
+function constructCurrenciesByIdWithBalance(currencyIds, balance) {
   return currencyIds.reduce((result, currencyId) => ({
     ...result,
     [currencyId]: {
-      balance        : INITIAL_CURRENCY_BALANCE,
+      balance,
       exchangeAmount : INITIAL_CURRENCY_EXCHANGE_AMOUNT,
       rate           : INITIAL_CURRENCY_RATE,
       rateIsLoading  : INITIAL_RATE_LOADING_STATE,
@@ -19,7 +19,11 @@ function constructCurrenciesById(currencyIds) {
   }), {});
 }
 
+const constructCurrenciesById = (currencyIds) =>
+  constructCurrenciesByIdWithBalance(currencyIds, INITIAL_CURRENCY_BALANCE);
+
 const INITIAL_CURRENCY_IDS        = ['USD', 'EUR', 'GBP'];
+const ANOTHER_CURRENCY_IDS        = ['JPY', 'USD', 'GBP'];
 const NEW_CURRENCY_ID             = 'JPY';
 const EXISTING_CURRENCY_ID        = 'USD';
 const CURRENCY_IDS_AFTER_REMOVAL  = ['EUR', 'GBP'];
@@ -28,8 +32,11 @@ const CURRENCY_IDS_AFTER_ADDITION = ['USD', 'EUR', 'GBP', 'JPY'];
 const INITIAL_CURRENCIES_BY_ID        = constructCurrenciesById(INITIAL_CURRENCY_IDS);
 const CURRENCIES_BY_ID_AFTER_REMOVAL  = constructCurrenciesById(CURRENCY_IDS_AFTER_REMOVAL);
 const CURRENCIES_BY_ID_AFTER_ADDITION = constructCurrenciesById(CURRENCY_IDS_AFTER_ADDITION);
+const ANOTHER_CURRENCIES_BY_ID        = constructCurrenciesByIdWithBalance(
+  ANOTHER_CURRENCY_IDS, BALANCE_FOR_STARTING_CURRENCIES
+);
 
-const NEW_CURRENCY_BALANCE = 1000;
+const BALANCE = 50;
 const NEW_CURRENCY_EXCHANGE_AMOUNT = 42.42;
 const NEW_RATES_TO_USD = {
   USD : 1,
@@ -71,16 +78,18 @@ function checkSiblingAttributesMutation(state, idKey, id, actionType, updateKey,
   expect(newAttributes).toEqual(expect.objectContaining(oldAttributes));
 }
 
-function checkAttributeUpdate(state, idKey, id, actionType, updateKey, updateValue) {
-  const newState = currenciesByIdHandlers[actionType](
-    state,
-    { [idKey]: id, [updateKey]: updateValue }
-  );
-
-  expect(newState[id][updateKey]).toBe(updateValue);
-}
-
 describe('currencyIdsHandlers', () => {
+  describe(LOAD_INITIAL_CURRENCIES, () => {
+    it('should reset currencyIds', () => {
+      const newCurrencyIds = currencyIdsHandlers[LOAD_INITIAL_CURRENCIES](
+        INITIAL_CURRENCY_IDS,
+        { currencyIds: ANOTHER_CURRENCY_IDS }
+      );
+
+      expect(newCurrencyIds).toEqual(ANOTHER_CURRENCY_IDS);
+    });
+  });
+
   describe(ADD_CURRENCY, () => {
     it('should add currency id ', () => {
       const newCurrencyIds = currencyIdsHandlers[ADD_CURRENCY](
@@ -124,6 +133,17 @@ describe('currencyIdsHandlers', () => {
 });
 
 describe('currenciesByIdHandlers', () => {
+  describe(LOAD_INITIAL_CURRENCIES, () => {
+    it('should set currencies with starting balance', () => {
+      const newCurrencies = currenciesByIdHandlers[LOAD_INITIAL_CURRENCIES](
+        INITIAL_CURRENCIES_BY_ID,
+        { currencyIds: ANOTHER_CURRENCY_IDS }
+      );
+
+      expect(newCurrencies).toEqual(expect.objectContaining(ANOTHER_CURRENCIES_BY_ID));
+    });
+  });
+
   describe(ADD_CURRENCY, () => {
     it('should add currency with default values', () => {
       const newCurrencies = currenciesByIdHandlers[ADD_CURRENCY](
@@ -164,16 +184,15 @@ describe('currenciesByIdHandlers', () => {
     });
   });
 
-  describe(UPDATE_BALANCE, () => {
+  describe(ADD_BALANCE, () => {
     it('should update balance of the currency', () => {
-      checkAttributeUpdate(
+      const newState = currenciesByIdHandlers[ADD_BALANCE](
         INITIAL_CURRENCIES_BY_ID,
-        'currencyId',
-        EXISTING_CURRENCY_ID,
-        UPDATE_BALANCE,
-        'balance',
-        NEW_CURRENCY_BALANCE
+        { currencyId: EXISTING_CURRENCY_ID, amount: BALANCE }
       );
+      const initialAmount = INITIAL_CURRENCIES_BY_ID[EXISTING_CURRENCY_ID].balance;
+
+      expect(newState[EXISTING_CURRENCY_ID].balance).toBe(initialAmount + BALANCE);
     });
 
     it('should copy currency\'s other properties', () => {
@@ -181,9 +200,9 @@ describe('currenciesByIdHandlers', () => {
         INITIAL_CURRENCIES_BY_ID,
         'currencyId',
         EXISTING_CURRENCY_ID,
-        UPDATE_BALANCE,
+        ADD_BALANCE,
         'balance',
-        NEW_CURRENCY_BALANCE
+        BALANCE
       );
     });
 
@@ -192,23 +211,55 @@ describe('currenciesByIdHandlers', () => {
         INITIAL_CURRENCIES_BY_ID,
         'currencyId',
         EXISTING_CURRENCY_ID,
-        UPDATE_BALANCE,
+        ADD_BALANCE,
         'balance',
-        NEW_CURRENCY_BALANCE
+        BALANCE
+      );
+    });
+  });
+
+  describe(SUBSTRACT_BALANCE, () => {
+    it('should update balance of the currency', () => {
+      const newState = currenciesByIdHandlers[SUBSTRACT_BALANCE](
+        INITIAL_CURRENCIES_BY_ID,
+        { currencyId: EXISTING_CURRENCY_ID, amount: BALANCE }
+      );
+      const initialAmount = INITIAL_CURRENCIES_BY_ID[EXISTING_CURRENCY_ID].balance;
+
+      expect(newState[EXISTING_CURRENCY_ID].balance).toBe(initialAmount - BALANCE);
+    });
+
+    it('should copy currency\'s other properties', () => {
+      checkSiblingAttributesMutation(
+        INITIAL_CURRENCIES_BY_ID,
+        'currencyId',
+        EXISTING_CURRENCY_ID,
+        SUBSTRACT_BALANCE,
+        'balance',
+        BALANCE
+      );
+    });
+
+    it('should copy other currencies\' references', () => {
+      checkSiblingItemsMutation(
+        INITIAL_CURRENCIES_BY_ID,
+        'currencyId',
+        EXISTING_CURRENCY_ID,
+        SUBSTRACT_BALANCE,
+        'balance',
+        BALANCE
       );
     });
   });
 
   describe(UPDATE_EXCHANGE_AMOUNT, () => {
     it('should update exchange amount of the currency', () => {
-      checkAttributeUpdate(
+      const newState = currenciesByIdHandlers[UPDATE_EXCHANGE_AMOUNT](
         INITIAL_CURRENCIES_BY_ID,
-        'currencyId',
-        EXISTING_CURRENCY_ID,
-        UPDATE_EXCHANGE_AMOUNT,
-        'exchangeAmount',
-        NEW_CURRENCY_EXCHANGE_AMOUNT
+        { currencyId: EXISTING_CURRENCY_ID, exchangeAmount: NEW_CURRENCY_EXCHANGE_AMOUNT }
       );
+
+      expect(newState[EXISTING_CURRENCY_ID].exchangeAmount).toBe(NEW_CURRENCY_EXCHANGE_AMOUNT);
     });
 
     it('should copy currency\'s other properties', () => {

@@ -1,5 +1,5 @@
-import { UPDATE_BALANCE, UPDATE_EXCHANGE_AMOUNT,
-         ADD_CURRENCY, REMOVE_CURRENCY, LOAD_RATES,
+import { LOAD_INITIAL_CURRENCIES, ADD_BALANCE, SUBSTRACT_BALANCE,
+         UPDATE_EXCHANGE_AMOUNT, ADD_CURRENCY, REMOVE_CURRENCY, LOAD_RATES,
          UPDATE_RATES, UPDATE_RATES_LOADING_STATE, SHOW_RATES_ERROR } from 'action-types';
 import { createReducer, omit } from 'utils';
 
@@ -9,8 +9,8 @@ export const INITIAL_CURRENCY_RATE            = null;
 export const INITIAL_RATE_LOADING_STATE       = true;
 export const INITIAL_RATE_ERROR_STATE         = false;
 
-const BALANCE_FOR_STARTING_CURRENCIES = 100;
-const INITIAL_CURRENCY_IDS = ['USD', 'EUR', 'GBP'];
+export const BALANCE_FOR_STARTING_CURRENCIES = 100;
+const INITIAL_CURRENCY_IDS = [];
 const INITIAL_CURRENCIES_BY_ID = INITIAL_CURRENCY_IDS.reduce((result, currencyId) => ({
   ...result,
   [currencyId]: {
@@ -24,9 +24,16 @@ const INITIAL_CURRENCIES_BY_ID = INITIAL_CURRENCY_IDS.reduce((result, currencyId
 
 export const currencyIdsHandlers = {
   /**
+   * Triggered at initial currencies load
+   * @param state
+   * @param {CurrencyId[]} payload.currencyIds
+   */
+  [LOAD_INITIAL_CURRENCIES]: (state, { currencyIds }) => currencyIds,
+
+  /**
    * Adds target currency id
    * @param state
-   * @param payload.currencyId
+   * @param {CurrencyId} payload.currencyId
    */
   [ADD_CURRENCY]: (state, { currencyId }) => {
     if (state.includes(currencyId)) return state;
@@ -36,13 +43,31 @@ export const currencyIdsHandlers = {
   /**
    * Removes target currency id
    * @param state
-   * @param payload.currencyId
+   * @param {CurrencyId} payload.currencyId
    */
   [REMOVE_CURRENCY]: (state, { currencyId }) =>
     state.filter(prevCurrencyId => prevCurrencyId !== currencyId)
 };
 
 export const currenciesByIdHandlers = {
+  /**
+   * Adds currencies with balance equal to BALANCE_FOR_STARTING_CURRENCY
+   * and other default params
+   * @param state
+   * @param {CurrencyId[]} payload.currencyIds
+   */
+  [LOAD_INITIAL_CURRENCIES]: (state, { currencyIds }) =>
+    currencyIds.reduce((newState, currencyId) => ({
+      ...newState,
+      [currencyId]: {
+        balance        : BALANCE_FOR_STARTING_CURRENCIES,
+        exchangeAmount : INITIAL_CURRENCY_EXCHANGE_AMOUNT,
+        rate           : INITIAL_CURRENCY_RATE,
+        rateIsLoading  : INITIAL_RATE_LOADING_STATE,
+        showRatesError : INITIAL_RATE_ERROR_STATE
+      }
+    }), {}),
+
   /**
    * Adds target currency
    * with zero balance, unset exchangeAmount, unset rate and negative rate loading state
@@ -71,16 +96,30 @@ export const currenciesByIdHandlers = {
   [REMOVE_CURRENCY]: (state, { currencyId }) => omit(state, currencyId),
 
   /**
-   * Updates available balance for target currency
+   * Raises available balance for target currency
    * @param state
    * @param payload.currencyId
-   * @param {number} payload.balance
+   * @param {number} payload.amount
    */
-  [UPDATE_BALANCE]: (state, { currencyId, balance }) => ({
+  [ADD_BALANCE]: (state, { currencyId, amount }) => ({
     ...state,
     [currencyId]: {
       ...state[currencyId],
-      balance
+      balance: state[currencyId].balance + amount
+    }
+  }),
+
+  /**
+   * Raises available balance for target currency
+   * @param state
+   * @param payload.currencyId
+   * @param {number} payload.amount
+   */
+  [SUBSTRACT_BALANCE]: (state, { currencyId, amount }) => ({
+    ...state,
+    [currencyId]: {
+      ...state[currencyId],
+      balance: state[currencyId].balance - amount
     }
   }),
 

@@ -108,7 +108,7 @@ describe('pollForRates', () => {
 
     jest.runTimersToTime(RATES_POLL_TIMEOUT);
 
-    Promise.resolve()
+    return Promise.resolve()
     .then(() => {
       expect(dispatchMock).toHaveBeenCalledTimes(1);
       expect(dispatchMock).toHaveBeenCalledWith({

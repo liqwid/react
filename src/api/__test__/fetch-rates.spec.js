@@ -1,5 +1,5 @@
 import { get } from 'axios';
-import { fetchRates, RATES_API } from '../fetchRates';
+import { fetchRates, RATES_API } from '../fetch-rates';
 
 jest.mock('axios', () => ({
   get: jest.fn()
