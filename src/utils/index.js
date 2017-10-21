@@ -18,3 +18,10 @@ export function omit(object, ...keys) {
     [key]: object[key]
   }), {});
 }
+
+export function formatFixed(currency, numberOfDigits) {
+  return Number(currency.toFixed(numberOfDigits)
+         .replace(/0+$/, '').replace(/\.$/, ''));
+}
+
+export * from './currency-symbols';

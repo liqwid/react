@@ -9,6 +9,7 @@ import { bind } from 'decko';
 
 const DECIMAL = '.';
 const DELETE  = 'delete';
+const ZERO    = '0';
 
 export class CustomizedKeyboard extends CustomKeyboard {
   onKeyboardClick = (e, value) => {
@@ -74,10 +75,28 @@ export class AmountKeyboard extends Component {
     const value = exchangeAmount;
 
     let valueAfterChange;
+
+    // Handles deletion
     if (KeyboardItemValue === DELETE) {
       valueAfterChange = value.slice(0, value.length - 1);
+
+      // Does not allow second decimal
     } else if (KeyboardItemValue === DECIMAL && value.indexOf(DECIMAL) > 0) {
       valueAfterChange = value;
+
+      // Adds zero before first decimal
+    } else if (KeyboardItemValue === DECIMAL && value === '') {
+      valueAfterChange = value + ZERO + DECIMAL;
+
+      // Does not allow more zeroes if value is already a zero
+    } else if (KeyboardItemValue === ZERO && value === ZERO) {
+      valueAfterChange = value;
+
+      // Replaces zero with inputed value
+    } else if (value === ZERO && KeyboardItemValue !== DECIMAL) {
+      valueAfterChange = KeyboardItemValue;
+
+    // Handles number addition
     } else {
       valueAfterChange = value + KeyboardItemValue;
     }
