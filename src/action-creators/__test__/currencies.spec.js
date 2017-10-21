@@ -5,6 +5,7 @@ import { loadInitialCurrencies, updateExchangeAmount, addBalance, substractBalan
          INITIAL_CURRENCY_IDS, CURRENCIES_LOAD_TIMEOUT } from '../currencies';
 
 const dispatchMock = jest.fn();
+const EXCHANGE_AMOUNT = '100';
 const AMOUNT = 100;
 const CURRENCY_ID = 'USD';
 jest.useFakeTimers();
@@ -34,10 +35,11 @@ describe('loadInitialCurrencies', () => {
 
 describe('updateExchangeAmount', () => {
   it(`should return a ${UPDATE_EXCHANGE_AMOUNT} action and pass amount to it`, () => {
-    expect(updateExchangeAmount(AMOUNT)).toEqual({
+    expect(updateExchangeAmount(CURRENCY_ID, EXCHANGE_AMOUNT)).toEqual({
       type    : UPDATE_EXCHANGE_AMOUNT,
       payload : {
-        exchangeAmount: AMOUNT
+        currencyId     : CURRENCY_ID,
+        exchangeAmount : EXCHANGE_AMOUNT
       }
     });
   });

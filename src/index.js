@@ -4,20 +4,22 @@ import { Provider } from 'react-redux';
 import store from 'store';
 import { ExchangeContainer, ToContainer, FromContainer } from 'containers';
 import { ContentLayout, HeaderLayout } from 'layouts';
-import { BackButton, RateButton, ExchangeButton } from 'components';
+import { BackButton, RateButton, ExchangeButton, AmountKeyboard } from 'components';
 
 export default function ExchangeWidget({ handleBack }) {
   return (
     <Provider store={store}>
       <ExchangeContainer>
-        <HeaderLayout>
-          <BackButton handleBack={handleBack} />
+        <HeaderLayout
+          leftButton={<BackButton handleBack={handleBack} />}
+          rightButton={<ExchangeButton />}
+        >
           <RateButton />
-          <ExchangeButton />
         </HeaderLayout>
         <ContentLayout>
-          {/* <ToContainer />
-          <FromContainer /> */}
+          <FromContainer />
+          <ToContainer />
+          <AmountKeyboard />
         </ContentLayout>
       </ExchangeContainer>
     </Provider>

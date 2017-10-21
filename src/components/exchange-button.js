@@ -4,30 +4,34 @@ import { connect } from 'react-redux';
 import { addBalance, substractBalance } from 'action-creators';
 
 const mapStateToProps = ({ from, to, currenciesById }) => {
-  const fromCurrency = currenciesById[from];
-  const toCurrency   = currenciesById[to];
-  const { exchangeAmount } = fromCurrency;
+  const fromCurrency   = currenciesById[from];
+  const toCurrency     = currenciesById[to];
+  const exchangeAmount = Number(fromCurrency.exchangeAmount);
   return {
     exchangeAmount,
     from,
     to,
-    disabled: exchangeAmount <= 0
-           || exchangeAmount > fromCurrency.balance
-           || fromCurrency.showRateError
-           || toCurrency.showRateError
-           || fromCurrency.isLoadingRate
-           || toCurrency.isLoadingRate
+    disabled: Boolean(
+         exchangeAmount <= 0
+      || exchangeAmount > fromCurrency.balance
+      || fromCurrency.showRateError
+      || toCurrency.showRateError
+      || fromCurrency.isLoadingRate
+      || toCurrency.isLoadingRate
+    )
   };
 };
 const mapDispatchToProps = { addBalance, substractBalance };
 
 export function ExchangeButton(props) {
   const handleClick = () => {
+    if (props.disabled) return;
+
     props.addBalance(props.to, props.exchangeAmount);
     props.substractBalance(props.from, props.exchangeAmount);
   };
 
-  return <button onClick={handleClick} disabled={props.disabled} />;
+  return <div onClick={handleClick} role="button" tabIndex={0}>Exchange</div>;
 }
 
 ExchangeButton.propTypes = {

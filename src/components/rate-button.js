@@ -9,11 +9,13 @@ const mapStateToProps = ({ to, from, currenciesById }) => {
   return {
     from,
     to,
-    error : toCurrency.showRatesError || toCurrency.showRatesError,
+    error : Boolean(toCurrency.showRatesError || toCurrency.showRatesError),
     rate  : toCurrency.rate && fromCurrency.rate && (toCurrency.rate / fromCurrency.rate),
-    hide  : toCurrency.rateIsLoading
-         || fromCurrency.rateIsLoading
-         || from === to
+    hide  : Boolean(
+         toCurrency.rateIsLoading
+      || fromCurrency.rateIsLoading
+      || from === to
+    )
   };
 };
 

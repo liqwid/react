@@ -15,10 +15,10 @@ export function loadInitialCurrencies() {
   };
 }
 
-export function updateExchangeAmount(exchangeAmount) {
+export function updateExchangeAmount(currencyId, exchangeAmount) {
   return {
     type    : UPDATE_EXCHANGE_AMOUNT,
-    payload : { exchangeAmount }
+    payload : { currencyId, exchangeAmount }
   };
 }
 

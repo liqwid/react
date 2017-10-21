@@ -4,7 +4,7 @@ import { LOAD_INITIAL_CURRENCIES, ADD_BALANCE, SUBSTRACT_BALANCE,
 import { createReducer, omit } from 'utils';
 
 export const INITIAL_CURRENCY_BALANCE         = 0;
-export const INITIAL_CURRENCY_EXCHANGE_AMOUNT = null;
+export const INITIAL_CURRENCY_EXCHANGE_AMOUNT = '';
 export const INITIAL_CURRENCY_RATE            = null;
 export const INITIAL_RATE_LOADING_STATE       = true;
 export const INITIAL_RATE_ERROR_STATE         = false;
