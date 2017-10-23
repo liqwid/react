@@ -1,0 +1,21 @@
+.header-button {
+  cursor: pointer;
+}
+
+.exchange-header {
+  background-color: rgba(0,0,0,0);
+}
+
+.exchange-header>.am-navbar-left {
+  padding-left: 1%;
+}
+
+.exchange-header>.am-navbar-right {
+  padding-right: 1%;
+  margin-right: 0;
+}
+
+.header-button.disabled {
+  color: rgba(255,255,255, 0.3);
+  cursor: default;
+}

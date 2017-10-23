@@ -9,13 +9,7 @@ const definePlugin = new webpack.DefinePlugin({
 
 const stylesheetsLoaders = [
   { loader: 'style-loader' },
-  { loader: 'css-loader',
-    options: {
-      modules: true,
-      localIdentName: '[path]-[local]-[hash:base64:3]',
-      sourceMap: true
-    }
-  }
+  { loader: 'css-loader' }
 ];
 
 module.exports = {
@@ -27,7 +21,7 @@ module.exports = {
   devtool: 'source-map',
   plugins: [htmlWebpackPlugin, definePlugin],
   resolve: {
-    modules: ['node_modules', path.join(__dirname, 'example')]
+    modules: ['node_modules', path.join(__dirname, 'src')]
   },
   module: {
     rules: [

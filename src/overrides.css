@@ -1,0 +1,32 @@
+* {
+  font-family: PingFang SC;
+  font-weight: 400;
+  color: #fff;
+  background-color: rgba(0, 0, 0, 0);
+}
+
+input {
+  font-family: PingFang SC;
+  font-weight: 400;
+}
+
+h1 {
+  font-size: 30px;
+  margin: 10px 0;
+}
+
+div {
+  background-color: rgba(0, 0, 0, 0);
+}
+
+p {
+  font-size: 12px;
+  margin: 0;
+}
+p.error {
+  color: #D61616;
+}
+
+.invisible {
+  visibility: hidden;
+}

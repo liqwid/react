@@ -4,7 +4,7 @@ const express = require('express');
 const app = express();
 
 const port = process.env.PORT ? process.env.PORT : 8181;
-const dist = path.join(__dirname, 'dist');
+const dist = path.join(__dirname, 'example-dist');
 
 app.use(express.static(dist));
 

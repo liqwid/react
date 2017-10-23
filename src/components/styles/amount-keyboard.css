@@ -1,0 +1,8 @@
+.amount-keyboard {
+  position: relative;
+}
+
+.disabled .am-number-keyboard-item {
+  background-color: #ddd;
+  color: rgba(255, 255, 255, 0.45);
+}

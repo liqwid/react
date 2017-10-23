@@ -1,21 +1,22 @@
 {
-  "name": "onsenui-currency-exchange-widget",
+  "name": "react-redux-exchange-widget",
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "start": "webpack-dev-server --hot",
+    "start": "cross-env NODE_ENV=development webpack-dev-server --config ./webpack.dev.config.js --hot",
     "server": "babel-watch server",
-    "production": "babel-node server",
+    "production:example": "babel-node server",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "postinstall": "npm run build",
+    "postinstall": "npm run build:example",
     "eslint": "eslint .",
+    "build:example": "cross-env NODE_ENV=production webpack --config ./webpack.example.production.js --progress --profile --colors",
     "build": "cross-env NODE_ENV=production webpack --config ./webpack.production.js --progress --profile --colors"
   },
   "engines": {
-    "node": "6.6.0",
-    "npm": "3.10.3"
+    "node": "8.4.0",
+    "npm": "5.5.1"
   },
   "jest": {
     "moduleDirectories": [
@@ -26,16 +27,39 @@
     "moduleNameMapper": {
       "^.+\\.(css)$": "identity-obj-proxy"
     },
-    "setupTestFrameworkScriptFile": "<rootDir>/example/test/setup.js"
+    "setupTestFrameworkScriptFile": "<rootDir>/test/setup.js",
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "example"
+    ],
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "example",
+      "test",
+      "layouts"
+    ]
   },
   "author": "Tony Popov",
   "license": "MIT",
   "devDependencies": {
+    "babel": "^6.23.0",
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
     "babel-eslint": "^8.0.1",
     "babel-jest": "^21.2.0",
+    "babel-loader": "^7.1.2",
+    "babel-plugin-import": "^1.6.2",
     "babel-plugin-react-transform": "^3.0.0",
+    "babel-plugin-transform-decorators-legacy": "^1.3.4",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
     "babel-watch": "^2.0.7",
+    "compression-webpack-plugin": "^1.0.1",
+    "connected-react-router": "4.2.3",
     "cross-env": "^5.0.5",
+    "css-loader": "^0.28.7",
+    "enzyme": "^3.0.0",
     "enzyme-adapter-react-16": "^1.0.0",
     "eslint": "^4.8.0",
     "eslint-config-airbnb": "^15.1.0",
@@ -43,42 +67,42 @@
     "eslint-plugin-import": "^2.7.0",
     "eslint-plugin-jsx-a11y": "^6.0.2",
     "eslint-plugin-react": "^7.4.0",
-    "identity-obj-proxy": "^3.0.0",
-    "imports-loader": "^0.7.1",
-    "jest-cli": "^21.2.1",
-    "react-addons-test-utils": "^15.6.2",
-    "react-test-renderer": "^16.0.0",
-    "react-transform-catch-errors": "^1.0.2",
-    "react-transform-hmr": "^1.0.4",
-    "redbox-react": "^1.5.0",
-    "webpack-dev-server": "2.9.1",
-    "babel": "^6.23.0",
-    "babel-cli": "^6.26.0",
-    "babel-core": "^6.26.0",
-    "babel-loader": "^7.1.2",
-    "babel-polyfill": "^6.26.0",
-    "babel-preset-es2015": "^6.24.1",
-    "babel-preset-react": "^6.24.1",
-    "babel-preset-stage-0": "^6.24.1",
-    "compression-webpack-plugin": "^1.0.1",
-    "connected-react-router": "4.2.3",
-    "css-loader": "^0.28.7",
-    "enzyme": "^3.0.0",
     "express": "^4.16.1",
     "extract-text-webpack-plugin": "^3.0.0",
     "file-loader": "^1.1.3",
     "history": "^4.7.2",
     "html-loader": "^0.5.1",
     "html-webpack-plugin": "^2.30.1",
+    "identity-obj-proxy": "^3.0.0",
+    "imports-loader": "^0.7.1",
+    "jest-cli": "^21.2.1",
     "null-loader": "^0.1.1",
+    "react-addons-test-utils": "^15.6.2",
+    "react-dom": "^16.0.0",
+    "react-router": "^4.2.0",
+    "react-test-renderer": "^16.0.0",
+    "react-transform-catch-errors": "^1.0.2",
+    "react-transform-hmr": "^1.0.4",
+    "redbox-react": "^1.5.0",
     "style-loader": "^0.18.2",
     "webpack": "3.6.0",
-    "react-router": "^4.2.0"
+    "webpack-dev-server": "2.9.1"
   },
   "dependencies": {
+    "@types/enzyme": "^3.1.0",
+    "@types/jest": "^21.1.4",
+    "antd-mobile": "^2.0.0",
+    "axios": "^0.16.2",
+    "babel-polyfill": "^6.26.0",
+    "classnames": "^2.2.5",
+    "decko": "^1.2.0",
+    "nuka-carousel": "^3.0.0",
+    "prop-types": "^15.6.0",
     "react": "^16.0.0",
-    "react-dom": "^16.0.0",
     "react-redux": "^5.0.6",
-    "redux": "^3.7.2"
+    "react-swipeable-views": "^0.12.8",
+    "react-swipeable-views-utils": "^0.12.8",
+    "redux": "^3.7.2",
+    "redux-thunk": "^2.2.0"
   }
 }

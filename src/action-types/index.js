@@ -1,0 +1,12 @@
+export const LOAD_INITIAL_CURRENCIES    = 'LOAD_INITIAL_CURRENCIES';
+export const ADD_CURRENCY               = 'ADD_CURRENCY';
+export const REMOVE_CURRENCY            = 'REMOVE_CURRENCY';
+export const UPDATE_EXCHANGE_AMOUNT     = 'UPDATE_EXCHANGE_AMOUNT';
+export const ADD_BALANCE                = 'ADD_BALANCE';
+export const SUBSTRACT_BALANCE          = 'SUBSTRACT_BALANCE';
+export const LOAD_RATES                 = 'LOAD_RATES';
+export const UPDATE_RATES               = 'UPDATE_RATES';
+export const UPDATE_RATES_LOADING_STATE = 'UPDATE_RATES_LOADING_STATE';
+export const SHOW_RATES_ERROR           = 'SHOW_RATES_ERROR';
+export const CHANGE_TO                  = 'CHANGE_TO';
+export const CHANGE_FROM                = 'CHANGE_FROM';

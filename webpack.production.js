@@ -26,7 +26,7 @@ const uglifyPlugin = new webpack.optimize.UglifyJsPlugin({ compress: { warnings:
 const compressionPlugin = new CompressionPlugin();
 
 module.exports = {
-  context: path.join(__dirname, 'example'),
+  context: path.join(__dirname, 'src'),
   entry: './index',
   output: {
     publicPath: '/',
@@ -42,7 +42,7 @@ module.exports = {
     compressionPlugin
   ],
   resolve: {
-    modules: ['node_modules', path.join(__dirname, 'example')]
+    modules: ['node_modules', path.join(__dirname, 'src')]
   },
   module: {
     rules: [
@@ -58,33 +58,6 @@ module.exports = {
         use: ExtractTextPlugin.extract({
           fallback: 'style-loader',
           use: stylesheetsLoaders
-        })
-      }, {
-        test: /\.scss$/,
-        use: ExtractTextPlugin.extract({
-          fallback: 'style-loader',
-          use: [...stylesheetsLoaders, {
-            loader: 'sass-loader'
-          }]
-        })
-      }, {
-        test: /\.sass$/,
-        use: ExtractTextPlugin.extract({
-          fallback: 'style-loader',
-          use: [...stylesheetsLoaders, {
-            loader: 'sass-loader',
-            options: {
-              indentedSyntax: 'sass',
-            }
-          }]
-        })
-      }, {
-        test: /\.less$/,
-        use: ExtractTextPlugin.extract({
-          fallback: 'style-loader',
-          use: [...stylesheetsLoaders, {
-            loader: 'less-loader'
-          }]
         })
       }
     ]
