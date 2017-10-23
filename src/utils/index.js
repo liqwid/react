@@ -20,8 +20,8 @@ export function omit(object, ...keys) {
 }
 
 export function formatFixed(currency, numberOfDigits) {
-  return Number(currency.toFixed(numberOfDigits)
-         .replace(/0+$/, '').replace(/\.$/, ''));
+  return currency.toFixed(numberOfDigits)
+         .replace(/0+$/, '').replace(/\.$/, '');
 }
 
 export * from './currency-symbols';

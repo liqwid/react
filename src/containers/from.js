@@ -8,7 +8,10 @@ const mapStateToProps = ({ from, currencyIds }) => ({ from, currencyIds });
 const mapDispatchToProps = { changeFrom };
 
 export function ToContainer(props) {
-  const { from, currencyIds } = props;
+  let { from, currencyIds } = props;
+  if (!currencyIds.includes(from)) {
+    from = currencyIds[0];
+  }
   return (<CurrencyCarouselContainer
     initialCurrencyId={from}
     currencyIds={currencyIds}

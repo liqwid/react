@@ -2,7 +2,7 @@ import { get } from 'axios';
 
 const BASE_CURRENCY       = 'USD';
 const OPENEXCHANGE_HOST   = 'https://openexchangerates.org';
-const OPENEXCHANGE_APP_ID = '3d92146e3b3f4da199e4a5a0f9914ab7';
+const OPENEXCHANGE_APP_ID = '815868164fc4412396b5d89734330458';
 const OPENEXCHANGE_API    = `api/latest.json?app_id=${OPENEXCHANGE_APP_ID}&base=${BASE_CURRENCY}`;
 export const RATES_API    = `${OPENEXCHANGE_HOST}/${OPENEXCHANGE_API}`;
 

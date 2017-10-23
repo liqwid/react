@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import './styles/content.css';
 
 export function ContentLayout({ children }) {
-  return (<div>{children}</div>);
+  return (<div className="content">{children}</div>);
 }
 
 ContentLayout.propTypes = {

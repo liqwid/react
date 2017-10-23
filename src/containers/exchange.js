@@ -3,10 +3,11 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { initRates, pollForRates, stopPollingForRates, loadInitialCurrencies } from 'action-creators';
 import { LoaderLayout, NoCurrenciesLayout } from 'layouts';
+import './styles/exchange-widget.css';
 
-const mapStateToProps = ({ currencyIds, appLoaded }) => ({ currencyIds, appLoaded });
+export const mapStateToProps = ({ currencyIds, appLoaded }) => ({ currencyIds, appLoaded });
 
-const mapDispatchToProps = (dispatch) => ({
+export const mapDispatchToProps = (dispatch) => ({
   initCurrencies : () => dispatch(loadInitialCurrencies()),
   initRates      : (currencyIds) => dispatch(initRates(currencyIds)),
   pollForRates   : (currencyIds) => dispatch(pollForRates(currencyIds)),
@@ -65,7 +66,7 @@ export class ExchangeContainer extends Component {
       return <NoCurrenciesLayout />;
     }
 
-    return <div>{children}</div>;
+    return <div className="exchange-widget-layout">{children}</div>;
   }
 }
 

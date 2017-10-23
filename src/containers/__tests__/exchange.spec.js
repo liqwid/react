@@ -1,7 +1,7 @@
 import React from 'react';
 import { shallow, mount } from 'enzyme';
 import { LoaderLayout, NoCurrenciesLayout } from 'layouts';
-import { ExchangeContainer } from '../exchange';
+import { ExchangeContainer, mapStateToProps, mapDispatchToProps } from '../exchange';
 
 const CURRENCY_IDS = ['USD', 'EUR'];
 const NEW_CURRENCY_IDS = ['USD', 'EUR', 'GBP'];
@@ -13,6 +13,17 @@ let pollForRates;
 let stopPolling;
 let component;
 let jsDomWrapper;
+
+const STATE = {
+  currencyIds    : [],
+  appLoaded      : false,
+  currenciesById : {}
+};
+
+const STATE_PROPS = {
+  currencyIds    : [],
+  appLoaded      : false
+}
 
 describe('ExchangeContainer', () => {
   beforeEach(() => {
@@ -102,5 +113,11 @@ describe('ExchangeContainer', () => {
 
     expect(initRates).toHaveBeenCalledTimes(1);
     expect(initRates).toHaveBeenCalledWith(ADDED_TO_NEW);
+  });
+});
+
+describe('ExchangeContainer mapStateToProps', () => {
+  it('should return only currencyIds and appLoaded props', () => {
+    expect(mapStateToProps(STATE)).toEqual(STATE_PROPS);
   });
 });

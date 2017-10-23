@@ -1,29 +1,37 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { currencySymbols } from 'utils';
+import { currencySymbols, formatFixed } from 'utils';
 import { IncomingAmount, AmountInput } from 'components';
 import Flex from 'antd-mobile/lib/flex';
 import 'antd-mobile/lib/flex/style/css';
 
 const mapStateToProps = (state, { toOrFrom, currencyId }) =>
-  ({ currenciesById }) => ({
-    balance: currenciesById[currencyId].balance,
-    currencyId,
-    toOrFrom
-  });
+  ({ currenciesById, to }) => {
+    const currency = currenciesById[currencyId];
+    const { balance } = currency;
 
-export function CurrencyCarouselItem({ currencyId, toOrFrom, balance }) {
+    return {
+      insufficientFunds: toOrFrom === 'from' && to !== currencyId && currency.exchangeAmount > balance,
+      balance,
+      currencyId,
+      toOrFrom
+    };
+  };
+
+export function CurrencyCarouselItem({ currencyId, toOrFrom, balance, insufficientFunds }) {
   const amountIetm = toOrFrom === 'from'
   ? <AmountInput currencyId={currencyId} />
   : <IncomingAmount currencyId={currencyId} />;
   return (
-    <Flex>
-      <Flex.Item>
+    <Flex className="exchange-item" align="start">
+      <Flex.Item className="exchange-block">
         <h1>{currencyId}</h1>
-        <p>You have {currencySymbols[currencyId]}{balance}</p>
+        <p className={insufficientFunds ? 'error' : ''}>
+          You have {currencySymbols[currencyId]}{formatFixed(balance, 2)}
+        </p>
       </Flex.Item>
-      <Flex.Item>
+      <Flex.Item className="exchange-block amount-block">
         {amountIetm}
       </Flex.Item>
     </Flex>
@@ -31,9 +39,10 @@ export function CurrencyCarouselItem({ currencyId, toOrFrom, balance }) {
 }
 
 CurrencyCarouselItem.propTypes = {
-  balance    : PropTypes.number.isRequired,
-  currencyId : PropTypes.string.isRequired,
-  toOrFrom   : PropTypes.string.isRequired
+  balance           : PropTypes.number.isRequired,
+  currencyId        : PropTypes.string.isRequired,
+  toOrFrom          : PropTypes.string.isRequired,
+  insufficientFunds : PropTypes.bool.isRequired
 };
 
 export const ConnectedCurrencyCarouselItem = connect(mapStateToProps)(CurrencyCarouselItem);

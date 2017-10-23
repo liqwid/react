@@ -1,0 +1,13 @@
+input.amount-input {
+  font-size: 30px;
+  height: 32px;
+  margin: 10px 0;
+  background-color: transparent;
+  text-align: inherit;
+  border: 0px;
+  width: 100%;
+  outline: none;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+}

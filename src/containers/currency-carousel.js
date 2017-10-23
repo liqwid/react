@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import ReactCarousel from 'rmc-nuka-carousel';
+import ReactCarousel from 'nuka-carousel';
 import 'antd-mobile/lib/carousel/style/css';
 import classnames from 'classnames';
 import { CurrencyCarouselItem } from 'containers';
 import { bind } from 'decko';
+import './styles/currency-carousel.css';
 
 export class CurrencyCarouselContainer extends Component {
   static propTypes = {
@@ -53,7 +54,12 @@ export class CurrencyCarouselContainer extends Component {
   @bind
   changeActiveCurrency(prevCurrencyIndex, nextCurrencyIndex) {
     const { changeScreenAction, currencyIds } = this.props;
-    changeScreenAction(currencyIds[nextCurrencyIndex]);
+    let nextCurrency = currencyIds[nextCurrencyIndex];
+
+    // Check for currency removal
+    if (!nextCurrency) nextCurrency = currencyIds[0];
+
+    changeScreenAction(nextCurrency);
   }
 
   render() {
@@ -62,16 +68,20 @@ export class CurrencyCarouselContainer extends Component {
     const { prefixCls } = this.props;
     const Decorators = [{
       component : this.getDots,
-      position  : 'BottomCenter'
+      position  : 'BottomCenter',
+      style     : {
+        bottom: '10%'
+      }
     }];
 
-    const wrapCls = classnames(prefixCls);
+    const wrapCls = classnames(prefixCls, 'currency-item', {
+      'to-mask': toOrFrom === 'to'
+    });
 
     return (
       <ReactCarousel
         slideIndex={initialIndex}
         wrapAround
-        swipeSpeed={35}
         className={wrapCls}
         decorators={Decorators}
         beforeSlide={this.changeActiveCurrency}

@@ -1,0 +1,12 @@
+.am-flexbox .amount-block {
+  text-align: right;
+
+  flex-grow: 2;
+}
+
+.exchange-item {
+  width: 80%;
+  margin: auto;
+
+  align-items: start;
+}

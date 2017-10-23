@@ -6,10 +6,12 @@ import CustomKeyboard, { KeyboardItem } from 'antd-mobile/lib/input-item/CustomK
 import 'antd-mobile/lib/input-item/style/css';
 import { updateExchangeAmount } from 'action-creators';
 import { bind } from 'decko';
+import './styles/amount-keyboard.css';
 
-const DECIMAL = '.';
-const DELETE  = 'delete';
-const ZERO    = '0';
+const DECIMAL          = '.';
+const DELETE           = 'delete';
+const ZERO             = '0';
+const MAX_INPUT_LENGTH = 8;
 
 export class CustomizedKeyboard extends CustomKeyboard {
   onKeyboardClick = (e, value) => {
@@ -19,7 +21,7 @@ export class CustomizedKeyboard extends CustomKeyboard {
   render() {
     const { prefixCls } = this.props;
 
-    const wrapperCls = classnames(`${prefixCls}-wrapper`);
+    const wrapperCls = classnames(`${prefixCls}-wrapper`, 'amount-keyboard');
 
     return (
       <div
@@ -48,15 +50,28 @@ export class CustomizedKeyboard extends CustomKeyboard {
   }
 }
 
-const mapStateToProps = ({ currenciesById, from }) => ({
-  from,
-  exchangeAmount: currenciesById[from].exchangeAmount
-});
+const mapStateToProps = ({ currenciesById, from, to }) => {
+  const fromCurrency = currenciesById[from];
+
+  if (!fromCurrency) {
+    return {
+      disabled : true,
+      from     : null
+    };
+  }
+
+  return {
+    from,
+    disabled       : from === to,
+    exchangeAmount : currenciesById[from].exchangeAmount
+  };
+};
 const mapDispatchToProps = { updateExchangeAmount };
 
 export class AmountKeyboard extends Component {
   static propTypes = {
     from                 : PropTypes.string.isRequired,
+    disabled             : PropTypes.bool.isRequired,
     exchangeAmount       : PropTypes.string,
     updateExchangeAmount : PropTypes.func.isRequired
   };
@@ -65,16 +80,19 @@ export class AmountKeyboard extends Component {
     exchangeAmount: ''
   };
 
-  shouldComponentUpdate() {
-    return false;
+  shouldComponentUpdate({ disabled }) {
+    return (disabled !== this.props.disabled);
   }
 
   @bind
   handleClick(KeyboardItemValue) {
-    const { exchangeAmount, from } = this.props;
+    const { exchangeAmount, from, disabled } = this.props;
     const value = exchangeAmount;
 
     let valueAfterChange;
+
+    if (disabled) return;
+    if (value.length >= MAX_INPUT_LENGTH) return;
 
     // Handles deletion
     if (KeyboardItemValue === DELETE) {
@@ -104,7 +122,9 @@ export class AmountKeyboard extends Component {
   }
 
   render() {
-    return <CustomizedKeyboard onClick={this.handleClick} />;
+    const { disabled } = this.props;
+    const keyboardCls = classnames({ disabled });
+    return <span className={keyboardCls}><CustomizedKeyboard onClick={this.handleClick} /></span>;
   }
 }
 
