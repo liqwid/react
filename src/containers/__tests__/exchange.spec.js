@@ -21,9 +21,9 @@ const STATE = {
 };
 
 const STATE_PROPS = {
-  currencyIds    : [],
-  appLoaded      : false
-}
+  currencyIds : [],
+  appLoaded   : false
+};
 
 describe('ExchangeContainer', () => {
   beforeEach(() => {
@@ -119,5 +119,16 @@ describe('ExchangeContainer', () => {
 describe('ExchangeContainer mapStateToProps', () => {
   it('should return only currencyIds and appLoaded props', () => {
     expect(mapStateToProps(STATE)).toEqual(STATE_PROPS);
+  });
+});
+
+
+describe('ExchangeContainer mapDispatchToProps', () => {
+  it('should return initCurrencies, initRates, pollForRates, stopPolling', () => {
+    const dispatchProps = mapDispatchToProps();
+    expect(dispatchProps.initCurrencies).toBeInstanceOf(Function);
+    expect(dispatchProps.initRates).toBeInstanceOf(Function);
+    expect(dispatchProps.pollForRates).toBeInstanceOf(Function);
+    expect(dispatchProps.stopPolling).toBeInstanceOf(Function);
   });
 });

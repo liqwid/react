@@ -6,7 +6,9 @@ import { IncomingAmount, AmountInput } from 'components';
 import Flex from 'antd-mobile/lib/flex';
 import 'antd-mobile/lib/flex/style/css';
 
-const mapStateToProps = (state, { toOrFrom, currencyId }) =>
+export const getBalanceMessage = (symbol, balance) => `You have ${symbol}${balance}`;
+
+export const mapStateToProps = (state, { toOrFrom, currencyId }) =>
   ({ currenciesById, to }) => {
     const currency = currenciesById[currencyId];
     const { balance } = currency;
@@ -28,7 +30,7 @@ export function CurrencyCarouselItem({ currencyId, toOrFrom, balance, insufficie
       <Flex.Item className="exchange-block">
         <h1>{currencyId}</h1>
         <p className={insufficientFunds ? 'error' : ''}>
-          You have {currencySymbols[currencyId]}{formatFixed(balance, 2)}
+          {getBalanceMessage(currencySymbols[currencyId], formatFixed(balance, 2))}
         </p>
       </Flex.Item>
       <Flex.Item className="exchange-block amount-block">

@@ -92,7 +92,7 @@ export class AmountKeyboard extends Component {
     let valueAfterChange;
 
     if (disabled) return;
-    if (value.length >= MAX_INPUT_LENGTH) return;
+    if (value.length >= MAX_INPUT_LENGTH && KeyboardItemValue !== DELETE) return;
 
     // Handles deletion
     if (KeyboardItemValue === DELETE) {

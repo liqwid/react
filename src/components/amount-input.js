@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { bind } from 'decko';
 import './styles/amount-input.css';
 
-const mapStateToProps = (state, { currencyId }) =>
+export const mapStateToProps = (state, { currencyId }) =>
   ({ currenciesById, to, from }) => ({
     sameCurrencies : currencyId === to,
     amount         : currenciesById[currencyId].exchangeAmount,
@@ -12,15 +12,11 @@ const mapStateToProps = (state, { currencyId }) =>
   });
 
 export class AmountInput extends Component {
-  state = {
-    input: null
+  static propTypes = {
+    amount         : PropTypes.string.isRequired,
+    sameCurrencies : PropTypes.bool.isRequired,
+    active         : PropTypes.bool.isRequired
   };
-
-  componentDidMount() {
-    if (this.input && this.props.active) {
-      setTimeout(this.input.focus(), 0);
-    }
-  }
 
   componentWillReceiveProps({ active }) {
     const { input } = this;
@@ -36,17 +32,16 @@ export class AmountInput extends Component {
   @bind
   bindInput(input) {
     this.input = input;
-    if (this.props.active) input.focus();
+  }
+
+  @bind
+  focus(e) {
+    if (this.props.active) e.target.focus();
   }
 
   render() {
     const { amount, sameCurrencies, active } = this.props;
     let formattedAmount = amount;
-
-    const focus = (e) => {
-      if (!active) return;
-      e.target.focus();
-    };
 
     if (amount.length) formattedAmount = `-${amount}`;
     return (
@@ -56,16 +51,11 @@ export class AmountInput extends Component {
         value={formattedAmount}
         hidden={sameCurrencies}
         className="amount-input"
-        onBlur={focus}
+        onBlur={this.focus}
+        readOnly
       />
     );
   }
 }
-
-AmountInput.propTypes = {
-  amount         : PropTypes.string.isRequired,
-  sameCurrencies : PropTypes.bool.isRequired,
-  active         : PropTypes.bool.isRequired
-};
 
 export const ConnectedAmountInput = connect(mapStateToProps)(AmountInput);

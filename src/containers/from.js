@@ -4,13 +4,14 @@ import { connect } from 'react-redux';
 import { CurrencyCarouselContainer } from 'containers';
 import { changeFrom } from 'action-creators';
 
-const mapStateToProps = ({ from, currencyIds }) => ({ from, currencyIds });
-const mapDispatchToProps = { changeFrom };
+export const mapStateToProps = ({ from, currencyIds }) => ({ from, currencyIds });
+export const mapDispatchToProps = { changeFrom };
+export const FIRST_CURRENCY_INDEX = 0;
 
-export function ToContainer(props) {
+export function FromContainer(props) {
   let { from, currencyIds } = props;
   if (!currencyIds.includes(from)) {
-    from = currencyIds[0];
+    from = currencyIds[FIRST_CURRENCY_INDEX];
   }
   return (<CurrencyCarouselContainer
     initialCurrencyId={from}
@@ -20,10 +21,10 @@ export function ToContainer(props) {
   />);
 }
 
-ToContainer.propTypes = {
+FromContainer.propTypes = {
   from        : PropTypes.string.isRequired,
   currencyIds : PropTypes.arrayOf(PropTypes.string).isRequired,
   changeFrom  : PropTypes.func.isRequired
 };
 
-export const ConnectedFromContainer = connect(mapStateToProps, mapDispatchToProps)(ToContainer);
+export const ConnectedFromContainer = connect(mapStateToProps, mapDispatchToProps)(FromContainer);

@@ -7,6 +7,10 @@ import { CurrencyCarouselItem } from 'containers';
 import { bind } from 'decko';
 import './styles/currency-carousel.css';
 
+export const DOT_ACTIVE_SUFFIX    = '-wrap-dot-active';
+export const DOT_SUFFIX           = '-wrap-dot';
+export const FIRST_CURRENCY_INDEX = 0;
+
 export class CurrencyCarouselContainer extends Component {
   static propTypes = {
     initialCurrencyId  : PropTypes.string.isRequired,
@@ -29,8 +33,8 @@ export class CurrencyCarouselContainer extends Component {
     const { prefixCls } = this.props;
     const dotDom = [];
     for (let index = 0; index < slideCount; index += slidesToScroll) {
-      const dotCls = classnames(`${prefixCls}-wrap-dot`, {
-        [`${prefixCls}-wrap-dot-active`]: index === currentSlide
+      const dotCls = classnames(`${prefixCls}${DOT_SUFFIX}`, {
+        [`${prefixCls}${DOT_ACTIVE_SUFFIX}`]: index === currentSlide
       });
       dotDom.push((
         <div
@@ -57,7 +61,7 @@ export class CurrencyCarouselContainer extends Component {
     let nextCurrency = currencyIds[nextCurrencyIndex];
 
     // Check for currency removal
-    if (!nextCurrency) nextCurrency = currencyIds[0];
+    if (!nextCurrency) nextCurrency = currencyIds[FIRST_CURRENCY_INDEX];
 
     changeScreenAction(nextCurrency);
   }

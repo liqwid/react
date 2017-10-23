@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { addBalance, substractBalance, updateExchangeAmount } from 'action-creators';
 import { formatFixed } from 'utils';
 
-const mapStateToProps = ({ from, to, currenciesById }) => {
+export const mapStateToProps = ({ from, to, currenciesById }) => {
   const fromCurrency   = currenciesById[from];
   const toCurrency     = currenciesById[to];
 
@@ -34,7 +34,7 @@ const mapStateToProps = ({ from, to, currenciesById }) => {
     )
   };
 };
-const mapDispatchToProps = { addBalance, substractBalance, updateExchangeAmount };
+export const mapDispatchToProps = { addBalance, substractBalance, updateExchangeAmount };
 
 export function ExchangeButton(props) {
   const { disabled, to, from, exchangeAmount, exchangeRate } = props;

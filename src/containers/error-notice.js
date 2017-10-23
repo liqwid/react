@@ -5,10 +5,10 @@ import NoticeBar from 'antd-mobile/lib/notice-bar';
 import 'antd-mobile/lib/notice-bar/style/css';
 import './styles/error-notice.css';
 
-const getRatesErrorText = (currencyIds) =>
+export const getRatesErrorText = (currencyIds) =>
   `Following rates failed to load: ${currencyIds.join(', ')}`;
 
-const mapStateToProps = ({ currenciesById }) => {
+export const mapStateToProps = ({ currenciesById }) => {
   const currenciesWithErrors = Object.keys(currenciesById).filter(
     (currencyId) => currenciesById[currencyId].showRatesError
   );
