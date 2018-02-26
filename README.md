@@ -4,16 +4,15 @@ Money exchange widget crafted with react and redux
 
 Supported engines:
 `node > 8`
-`npm > 5`
 
 Installation:
-`npm i`
+`yarn`
 
 Start
-`npm start`
+`yarn start`
 
 Test
-`npm test`
+`yarn test`
 
 Test coverage
-`npm test -- --coverage`
+`yarn test -- --coverage`
